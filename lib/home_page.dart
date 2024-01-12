@@ -10,7 +10,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<GameButton> buttonsList;
+  List<GameButton>? buttonsList;
   var player1;
   var player2;
   var activePlayer;
@@ -23,8 +23,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   List<GameButton> doInit() {
-    player1 = new List();
-    player2 = new List();
+    player1 = [];
+    player2 = [];
     activePlayer = 1;
 
     var gameButtons = <GameButton>[
@@ -57,7 +57,7 @@ class _HomePageState extends State<HomePage> {
       gb.enabled = false;
       int winner = checkWinner();
       if (winner == -1) {
-        if (buttonsList.every((p) => p.text != "")) {
+        if (buttonsList!.every((p) => p.text != "")) {
           showDialog(
               context: context,
               builder: (_) => new CustomDialog("Game Tied",
@@ -70,7 +70,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void autoPlay() {
-    var emptyCells = new List();
+    var emptyCells = [];
     var list = new List.generate(9, (i) => i + 1);
     for (var cellID in list) {
       if (!(player1.contains(cellID) || player2.contains(cellID))) {
@@ -81,8 +81,8 @@ class _HomePageState extends State<HomePage> {
     var r = new Random();
     var randIndex = r.nextInt(emptyCells.length-1);
     var cellID = emptyCells[randIndex];
-    int i = buttonsList.indexWhere((p)=> p.id == cellID);
-    playGame(buttonsList[i]);
+    int i = buttonsList!.indexWhere((p)=> p.id == cellID);
+    playGame(buttonsList![i]);
 
   }
 
@@ -192,33 +192,44 @@ class _HomePageState extends State<HomePage> {
                     childAspectRatio: 1.0,
                     crossAxisSpacing: 9.0,
                     mainAxisSpacing: 9.0),
-                itemCount: buttonsList.length,
+                itemCount: buttonsList!.length,
                 itemBuilder: (context, i) => new SizedBox(
                       width: 100.0,
                       height: 100.0,
-                      child: new RaisedButton(
-                        padding: const EdgeInsets.all(8.0),
-                        onPressed: buttonsList[i].enabled
-                            ? () => playGame(buttonsList[i])
+                      child: new ElevatedButton(
+
+                        style:ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(buttonsList![i].bg),
+                          padding: MaterialStateProperty.all(EdgeInsets.all(10)),
+                        ),
+                        //padding: const EdgeInsets.all(8.0),
+                        onPressed: buttonsList![i].enabled
+                            ? () => playGame(buttonsList![i])
                             : null,
                         child: new Text(
-                          buttonsList[i].text,
+                          buttonsList![i].text,
                           style: new TextStyle(
                               color: Colors.white, fontSize: 20.0),
+
                         ),
-                        color: buttonsList[i].bg,
-                        disabledColor: buttonsList[i].bg,
+
+                        //disabledColor: buttonsList[i].bg,
                       ),
                     ),
               ),
             ),
-            new RaisedButton(
+            new ElevatedButton(
               child: new Text(
                 "Reset",
                 style: new TextStyle(color: Colors.white, fontSize: 20.0),
               ),
-              color: Colors.red,
-              padding: const EdgeInsets.all(20.0),
+              //color: Colors.red,
+              //padding: const EdgeInsets.all(20.0),
+              style:ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(Colors.redAccent),
+
+                padding: MaterialStateProperty.all(EdgeInsets.all(20)),
+              ),
               onPressed: resetGame,
             )
           ],
